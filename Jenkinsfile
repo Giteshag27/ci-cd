@@ -11,6 +11,11 @@ pipeline {
         }
 
         stage('Build') {
+            agent {
+                docker {
+                    image 'node:18'
+                }
+            }
             steps {
                 echo 'Installing dependencies...'
                 sh 'npm install'
@@ -18,6 +23,11 @@ pipeline {
         }
 
         stage('Run App (Test)') {
+            agent {
+                docker {
+                    image 'node:18'
+                }
+            }
             steps {
                 echo 'Running application...'
                 sh 'node app.js &'
