@@ -10,27 +10,20 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:18'
-                }
-            }
+        stage('Build Docker Image') {
             steps {
-                echo 'Installing dependencies...'
-                sh 'npm install'
+                echo 'Building Docker image...'
+                sh 'docker build -t ci-cd .'
             }
         }
 
-        stage('Run App (Test)') {
-            agent {
-                docker {
-                    image 'node:18'
-                }
-            }
+        stage('Run Container') {
             steps {
-                echo 'Running application...'
-                sh 'node app.js &'
+                echo 'Stopping old container (if exists)...'
+                sh 'docker rm -f ci-cd-container || true'
+
+                echo 'Running new container...'
+                sh 'docker run -d -p 3001:3000 --name ci-cd-container ci-cd'
             }
         }
     }
